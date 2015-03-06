@@ -27,7 +27,17 @@ def getNeighbors(username, k):
 		distances.append((user['username'], dist))
 	distances.sort(key=operator.itemgetter(1))
 	return distances[:k]
-	
+
+def getRecommendedSubreddit(neighbors):
+	client = MongoClient()
+	users = allUsersInArray([neighbor[0] for neighbor in neighbors], client)
+	subredditFrequency = {}
+	totalsubs = []
+	for user in users:
+		totalsubs += user['subreddits']
+	subredditFrequency = {word : totalsubs.count(word) for word in set(totalsubs)}
+	return max(totalsubs, key=totalsubs.get)
+
 
 
 
