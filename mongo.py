@@ -10,18 +10,18 @@ def insertUser(username, subreddits, client):
 	#client = MongoCient()
 	db = client.Reddit
 	collection = db.users
-	userID = collection.insert(user)
+	userID = collection.update({'username': user['username']}, {'username': user['username'], 'subreddits' : user['subreddits'], 'updated': user['updated']}, upsert=True)
 	return userID
 
 def insertSub(sub, client):
-	user = {
+	sub = {
 		'name': sub,
 		'updated' : datetime.datetime.utcnow()
 	}
 	#client = MongoCient()
 	db = client.Reddit
 	collection = db.subreddits
-	userID = collection.insert(user)
+	userID = collection.update({'name': sub['name']}, {'name':sub['name'], 'updated': sub['updated']}, upsert=True)
 	return userID
 
 def queryUser(username, client):
