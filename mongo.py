@@ -13,6 +13,17 @@ def insertUser(username, subreddits, client):
 	userID = collection.insert(user)
 	return userID
 
+def insertSub(sub, client):
+	user = {
+		'name': sub,
+		'updated' : datetime.datetime.utcnow()
+	}
+	#client = MongoCient()
+	db = client.Reddit
+	collection = db.subreddits
+	userID = collection.insert(user)
+	return userID
+
 def queryUser(username, client):
 	#client = MongoCient()
 	collection = client.Reddit.users

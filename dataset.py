@@ -5,7 +5,6 @@ from mongo import *
 from pymongo import *
 import datetime
 
-unique_subs = []
 
 def getSubredditUsers(subreddit):
 	"""
@@ -25,7 +24,7 @@ def getComments(username):
 	"""
 	Return the subreddits a user has commented in.
 	"""
-	global unique_subs
+	unique_subs = []
 	client = MongoClient()
 	reddit = praw.Reddit(user_agent="kNN Subreddit Recommendation", handler=MultiprocessHandler())
 	user = reddit.get_redditor(username['user'])
@@ -35,6 +34,7 @@ def getComments(username):
 			subs.append(comment.subreddit.display_name)
 		if comment.subreddit.display_name not in unique_subs:
 			unique_subs.append(comment.subreddit.display_name)
+			insertSub(comment.subreddit.display_name, client)
 	return insertUser(username, subs, client)
 
 #def updateSubs():
