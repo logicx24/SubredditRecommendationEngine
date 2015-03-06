@@ -1,0 +1,7 @@
+multiprocessing==2.6.2.1
+praw==2.1.20
+pymongo==2.8
+requests==2.5.3
+six==1.9.0
+update-checker==0.11
+wsgiref==0.1.2

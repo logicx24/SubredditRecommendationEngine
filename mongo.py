@@ -1,35 +1,35 @@
 from pymongo import *
 import datetime
 
-def insertUser(username, subreddits):
+def insertUser(username, subreddits, client):
 	user = {
-		'username': username
-		'subreddits' : subreddits
+		'username': username,
+		'subreddits' : subreddits,
 		'updated' : datetime.datetime.utcnow()
 	}
-	client = MongoCient()
+	#client = MongoCient()
 	db = client.Reddit
 	collection = db.users
 	userID = collection.insert(user)
-	return UserID
+	return userID
 
-def queryUser(username):
-	client = MongoCient()
+def queryUser(username, client):
+	#client = MongoCient()
 	collection = client.Reddit.users
 	user = collection.find_one({'username': username})
 	return user
 
-def update(username, subreddits):
-	client = MongoCient()
+def update(username, subreddits, client):
+	#client = MongoCient()
 	collection = client.Reddit.users
-	collection.update({'username': username}, {$set: {'subreddits': subreddits}})
+	collection.update({'username': username}, {"$set": {'subreddits': subreddits}})
 
-def allUsersInArray(userArray):
-	client = MongoCient()
-	return client.Reddit.users.find({'username': {$in: userArray}})
+def allUsersInArray(userArray, client):
+	#client = MongoCient()
+	return client.Reddit.users.find({'username': {"$in": userArray}})
 
-def tempUserList():
-	return MongoCient().Reddit.temp.find()
+def tempUserList(client):
+	return client.Reddit.temp.find()
 
-def tempBulkInsert(users):
-	return MongoCient().Reddit.temp.insert(users)
+def tempBulkInsert(users, client):
+	return client.Reddit.temp.insert(users)
