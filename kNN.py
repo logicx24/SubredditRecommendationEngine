@@ -6,9 +6,9 @@ import operator
 
 def createUserVector(username):
 	client = MongoClient()
-	vector = [0]*len(dataset.unique_subs)
 	user = queryUser(username, client)
-	unique_subs = subreddits(client)
+	unique_subs = list(subreddits(client))
+	vector = [0]*len(unique_subs)
 	for i in range(len(unique_subs)):
 		if unique_subs[i]['name'] in user['subreddits']:
 			vector[i] = 1
@@ -30,18 +30,30 @@ def getNeighbors(username, k):
 	distances.sort(key=operator.itemgetter(1))
 	return distances[:k]
 
-def getRecommendedSubreddit(neighbors):
+def getRecommendedSubreddit(username):
+	neighbors = getNeighbors(username, 20)
+	print(neighbors)
 	client = MongoClient()
 	users = allUsersInArray([neighbor[0] for neighbor in neighbors], client)
+	banned = queryUser(username, client)['subreddits']
 	subredditFrequency = {}
 	totalsubs = []
 	for user in users:
 		totalsubs += user['subreddits']
 	subredditFrequency = {word : totalsubs.count(word) for word in set(totalsubs)}
-	return max(totalsubs, key=totalsubs.get)
+	#return max(subredditFrequency, key=subredditFrequency.get)
+	print(sorted(subredditFrequency.items(), key=operator.itemgetter(1))[::-1])
+	for reddit in sorted(subredditFrequency.items(), key=operator.itemgetter(1))[::-1]:
+		if reddit[0] not in banned:
+			return reddit[0]
 
 def main(username):
-	return getRecommendedSubreddit(getNeighbors(username, 100))
+	dataset.getComments(username)
+	return getRecommendedSubreddit(username)
+
+if __name__ == "__main__":
+	username = raw_input()
+	print(main(username))
 
 
 
