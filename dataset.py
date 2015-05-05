@@ -55,20 +55,11 @@ def getSubreddits():
 def cron(user):
 	client = MongoClient()
 	if abs(datetime.datetime.utcnow() - user['updated']).days >= 1:
-		unique_subs = []
-		client = MongoClient()
-		reddit = praw.Reddit(user_agent="kNN Subreddit Recommendation Engine", handler=MultiprocessHandler())
-		user = reddit.get_redditor(username['user'])
-		subs = []
-		for comment in user.get_comments(limit=250):
-			if comment.subreddit.display_name not in subs:
-				subs.append(comment.subreddit.display_name)
-			insertSub(comment.subreddit.display_name, client)
-	return insertUser(username, subs, client)
+		return getComments(username)
 
 def main():
 	try:
-		pool = Pool(processes=cpu_count())
+		pool = Pool(processes=(cpu_count()*6))
 		subs = getSubreddits()
 		pool.map(getSubredditUsers, subs)
 		users = [user['user'] for user in tempUserList(MongoClient())]
